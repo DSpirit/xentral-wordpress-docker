@@ -1,0 +1,4 @@
+@key = <consumer-key>
+@secret = <consumer-secret>
+GET https://localhost:8443/wp-json/wc/v3/orders
+Authorization: Basic {{key}}:{{secret}}

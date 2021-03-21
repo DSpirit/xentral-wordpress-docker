@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  # Web
+  wordpress:
+    build:
+      context: wordpress
+    restart: always
+    ports:
+      - 8443:443
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      frontend:
+      db:
+  wordpress-db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - wordpress_db:/var/lib/mysql
+    networks:
+      db:
+  # ERP
+  xentral:
+    build:
+      context: xentral
+    restart: always
+    ports:
+      - 8081:80
+    volumes:
+      #- xentral_apache:/etc/apache2
+      - xentral_app:/var/www/html
+      #- xentral_userdata:/var/www/html/userdata
+      #- xentral_conf:/var/www/html/conf
+      ## Allows do run the update faster after recreating the container
+      #- xentral_download:/var/www/html/download
+    networks:
+      frontend:
+      backend:
+      db:
+# MySQL
+  xentral-db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: xentral
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - xentral_db:/var/lib/mysql
+    networks:
+      db:
+volumes:
+  # WP
+  wordpress:
+  wordpress_db:
+  # Xentral
+  #xentral_apache:
+  xentral_app:
+  xentral_db:
+networks:
+  frontend:
+  backend:
+  db:
