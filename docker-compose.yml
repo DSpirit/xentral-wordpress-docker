@@ -38,8 +38,11 @@ services:
     ports:
       - 8081:80
     volumes:      
-      - xentral_app:/var/www/html
-    networks:
+      - xentral_userdata:/var/www/html/userdata
+      - xentral_conf:/var/www/html/conf
+      # Allows do run the update faster after recreating the container
+      - xentral_download:/var/www/html/download
+    networks: 
       frontend:
       backend:
       db:
@@ -62,7 +65,9 @@ volumes:
   wordpress:
   wordpress_db:
   # Xentral
-  xentral_app:
+  xentral_userdata:
+  xentral_conf:
+  xentral_download:
   xentral_db:
 networks:
   frontend:

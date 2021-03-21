@@ -19,10 +19,8 @@ RUN apt-get update \
  && apt-get install -y apache2 \
  && apt-get install -y php libapache2-mod-php php-mysql php-cli \
  && apt-get install -y php-mysql php-soap php-imap php-fpm php-zip php-gd php-xml php-curl php-mbstring php-ldap \ 
+ && apt-get install -y jq \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN apt update \
-    && apt install curl
 
 # install apache
 RUN echo "ServerName 0.0.0.0" >> /etc/apache2/apache2.conf
@@ -50,12 +48,12 @@ RUN wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-
 # Install Xentral (wawision)
 WORKDIR /var/www/html/
 
-RUN wget -O ./xentral.zip ${XENTRAL_INSTALLER_DOWNLOAD} \
- && rm index.html \
- && unzip xentral.zip -d /var/www/html/ \
- && chown -R www-data: /var/www/html/
-# in case of tar.gz use:
-#RUN tar -xzf wawision.tar.gz -C /var/www/html/ --strip-components=1
+RUN apt update \
+    && apt install curl \
+    && wget $(curl -s https://update.xentral.biz/download/installer.json | jq .uri -r) -O installer.zip \
+    && unzip installer.zip -d /var/www/html/ \
+    && rm index.html \ 
+    && chown -R www-data: /var/www/html/
 
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
@@ -80,8 +78,6 @@ RUN chown root: /etc/crontab && chmod 644 /etc/crontab
 # Bitte löschen Sie den Ordner www/setup!
 
 EXPOSE 80
-
-#RUN curl localhost/installer.php
 
 COPY entry.sh /usr/local/bin/entry.sh
 RUN chmod +x /usr/local/bin/entry.sh
