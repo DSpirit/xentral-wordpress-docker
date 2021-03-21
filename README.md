@@ -26,7 +26,7 @@ Run following command to start the containers: `docker-compose up -d`
    ![API Key](./docs/wordpress-woocommerce-api.png)
 
 ## Setup Xentral
-1. Install Xentral `localhost:8081/installer.php`.
+1. Go to `localhost:8081` and click "Next".
 1. In the database setup window, enter following information:
     ```
     Host: xentral-db
